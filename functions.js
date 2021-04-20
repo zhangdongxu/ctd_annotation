@@ -23,7 +23,9 @@ var input_data = external_data;
         document.getElementById("pubmedid").innerHTML = "PID: " + pid;
         let abstract = input_data[page_index]["text"];
         document.getElementById("pubmed_text").innerHTML = abstract;
-        generate_annotation_buttons((clear_history = true));
+        
+        label_list = [["", "", ""]];
+        update_annotation_buttons();
       }
 
       function changeLabel(slot) {
@@ -46,12 +48,14 @@ var input_data = external_data;
         }
       }
 
-      function generate_annotation_buttons(clear_history = false) {
-        if (clear_history == false) {
-          label_list.push(["", "", ""]);
-        } else {
-          label_list = [["", "", ""]];
-        }
+      function DeleteLabel(slot){
+        label_index = parseInt(slot.id.slice(2));
+        label_list.splice(label_index, 1);
+        update_annotation_buttons();
+      }
+
+      function update_annotation_buttons() {
+        
         let entities_current_page = input_data[page_index]["entities"];
         let relation_types = [
           "chem_gene:effect",
@@ -114,6 +118,7 @@ var input_data = external_data;
             ")>" +
             entity1options +
             "</select>";
+
           let e2options =
             ' E2:<select id="e2' +
             i +
@@ -122,6 +127,7 @@ var input_data = external_data;
             ")>" +
             entity2options +
             "</select>";
+
           let reloptions =
             ' Relation label:<select class="relation", id="re' +
             i +
@@ -130,8 +136,11 @@ var input_data = external_data;
             ")>" +
             relationoptions +
             "</select>";
+
+            let deletebutton = '<input type="button" , id="dl' + i + '", value="-" onclick="DeleteLabel(dl' + i+ ')" />'
+            
           appended_options =
-            appended_options + e1options + e2options + reloptions + "<br>";
+            appended_options + e1options + e2options + reloptions + deletebutton +"<br>";
         }
         console.log(appended_options);
         document.getElementById("options").innerHTML = appended_options;
@@ -188,13 +197,16 @@ var input_data = external_data;
       }
 
       function add_label() {
-        generate_annotation_buttons();
+        label_list.push(["", "", ""]);
+        update_annotation_buttons();
       }
 
       function save_label() {
         console.log(label_list);
-        // var blob = new Blob([label_list], { type: "application/json" });
-        // saveAs(blob, pid + ".json");
-        var storedItem = localStorage.getItem("storedItem");
-        localStorage.setItem("storedItem", label_list);
+        var textFile = null;
+        var data = new Blob([label_list], { type: "application/json" });
+        if (textFile !== null) {
+          window.URL.revokeObjectURL(textFile);
+        }
+        window.URL.createObjectURL(data).href;
       }
