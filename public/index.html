@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Annotation interface</title>
+    <style>
+      body {
+        max-width: 500px;
+        margin: auto;
+      }
+      img {
+        width: 100px;
+        border-radius: 50px;
+        float: center;
+      }
+      p.username {
+        font-weight: bold;
+      }
+      select.relation {
+        font-weight: bold;
+      }
+    </style>
+    <!-- <script type="text/javascript" src="./data.js">
+      // load the data from data.js
+    </script> -->
+    <script type="text/javascript" src="./functions.js"></script>
+  </head>
+  <body onload="newSession()">
+    <h1>CTD annotation interface</h1>
+    <p id="login"></p>
+    <p id="pubmedid"></p>
+    <hr />
+    <p id="pubmed_text"></p>
+    <hr />
+    <div id="options"></div>
+
+    <input type="button" , value="Add" onclick="add_label()" />
+
+    <input type="button" , value="Save" onclick="save_label()" />
+    <div id="completediv"></div>
+    <hr />
+    <input type="button" , value="Previous page" onclick="previousPage()" />
+    <input type="number" , id="inputpage" , placeholder="Go to page number" />
+    <input type="button" , value="Go" onclick="gotoPage()" />
+    <input type="button" , value="Next page" onclick="nextPage()" />
+
+    <p id="messages"></p>
+  </body>
+</html>
