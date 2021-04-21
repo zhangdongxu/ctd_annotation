@@ -4,17 +4,25 @@ app.listen(3000, () => console.log('listening to 3000'));
 app.use(express.static('public'));
 app.use(express.json({limit: '1mb'}));
 
+const fs = require('fs');
+let rawdata = fs.readFileSync('data.json');
+let external_data = JSON.parse(rawdata);
+
+let relation_types_dict = fs.readFileSync('relation_map.json');
+let relation_types = Object.keys(JSON.parse(relation_types_dict));
+// var relation_types = ["chem_gene:effect", "chem_disease:effect", "gene_disease:effect"];
+
 var account_dict = {"apple": "", "banana": ""};
-var relation_types = ["chem_gene:effect", "chem_disease:effect", "gene_disease:effect"];
-var external_data = {"apple":{"browse_history": 0, "data": [
-      {"text":"cat love dog, bird hates eagle", "pid":"123", "entities": ["cat", "dog", "bird", "eagle"], "labels": [["cat", "cat", ""]], "complete": false},
-      {"text":"2cat love dog, bird hates eagle", "pid":"234", "entities": ["2cat", "dog", "bird", "eagle"], "labels": [["bird", "bird", ""], ["cat", "cat", ""]], "complete": false},
-      {"text":"3cat love dog, bird hates eagle", "pid":"345", "entities": ["3cat", "dog", "bird", "eagle"], "labels": [["", "", ""]], "complete": false}]},
-    "banana":{"browse_history": 0, "data": [
-        {"text":"cat love dog, bird hates eagle", "pid":"123", "entities": ["cat", "dog", "bird", "eagle"], "labels": [["cat", "cat", ""]], "complete": false},
-      {"text":"2cat love dog, bird hates eagle", "pid":"234", "entities": ["2cat", "dog", "bird", "eagle"], "labels": [["bird", "bird", ""], ["cat", "cat", ""]], "complete": false},
-      {"text":"3cat love dog, bird hates eagle", "pid":"345", "entities": ["3cat", "dog", "bird", "eagle"], "labels": [["", "", ""]], "complete": false}]}
-    };
+
+// var external_data = {"apple":{"browse_history": 0, "data": [
+//       {"text":"cat love dog, bird hates eagle", "pid":"123", "entities": ["cat", "dog", "bird", "eagle"], "labels": [["cat", "cat", ""]], "complete": false},
+//       {"text":"2cat love dog, bird hates eagle", "pid":"234", "entities": ["2cat", "dog", "bird", "eagle"], "labels": [["bird", "bird", ""], ["cat", "cat", ""]], "complete": false},
+//       {"text":"3cat love dog, bird hates eagle", "pid":"345", "entities": ["3cat", "dog", "bird", "eagle"], "labels": [["", "", ""]], "complete": false}]},
+//     "banana":{"browse_history": 0, "data": [
+//         {"text":"cat love dog, bird hates eagle", "pid":"123", "entities": ["cat", "dog", "bird", "eagle"], "labels": [["cat", "cat", ""]], "complete": false},
+//       {"text":"2cat love dog, bird hates eagle", "pid":"234", "entities": ["2cat", "dog", "bird", "eagle"], "labels": [["bird", "bird", ""], ["cat", "cat", ""]], "complete": false},
+//       {"text":"3cat love dog, bird hates eagle", "pid":"345", "entities": ["3cat", "dog", "bird", "eagle"], "labels": [["", "", ""]], "complete": false}]}
+//     };
 
 var input_data = external_data;
 
@@ -82,10 +90,14 @@ app.get('/newpage', (request, response) => {
     let page_num = parseInt(request.query.page_num);
     let username = request.query.username;
     console.log(input_data[username]["data"][page_num]["complete"]);
+    console.log(input_data[username]["data"][page_num]);
+    console.log(input_data[username]["data"][page_num]["entities"]);
+    console.log(Object.keys(input_data[username]["data"][page_num]["entities"]));
     msg = {
         pid: input_data[username]["data"][page_num]["pid"],
-        text: input_data[username]["data"][page_num]["text"],
-        entities: input_data[username]["data"][page_num]["entities"],
+        title: input_data[username]["data"][page_num]["title"],
+        abstract: input_data[username]["data"][page_num]["abstract"],
+        entities_info: input_data[username]["data"][page_num]["entities"],
         labels: input_data[username]["data"][page_num]["labels"],
         complete: input_data[username]["data"][page_num]["complete"],
     }

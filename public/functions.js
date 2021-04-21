@@ -3,8 +3,10 @@ var page_index = -1;
 var total_num_pages = -1;
 var active = false;
 var pid;
+var title = "";
 var abstract = "";
 var entities = [];
+var entities_info = [];
 var label_list = [["", "", ""]];
 var relation_types = [];
 var completevalue;
@@ -68,17 +70,31 @@ async function update_new_page() {
   // });
 
   pid = input_data.pid;
-  abstract = input_data.text;
+  title = input_data.title;
+  abstract = input_data.abstract;
   // for (var i = 0; i < input_data.entities.length; i++)
-  entities = input_data.entities;
+  
+  entities_info = input_data.entities_info;
+  entities = Object.keys(entities_info);
   label_list = input_data.labels;
   completevalue = input_data.complete;
   console.log(entities.length);
   document.getElementById("messages").innerHTML =
     "Page " + (page_index + 1);
   
+  var entities_info_str = "";
+  for (var i = 0; i < entities.length; i++){
+    var ent_info_list = entities_info[entities[i]];
+    var ent_offset_str = "";
+    for (var j = 0; j < ent_info_list.length; j++){
+      ent_offset_str += ent_info_list[j][0] + "-" + ent_info_list[j][0] + " ";
+    }
+    entities_info_str += entities[i] + ": type = " + ent_info_list[0][3] + 
+                        " | mention = " + ent_info_list[0][2] + " | offset = " + ent_offset_str + "<br> ";
+  }
   document.getElementById("pubmedid").innerHTML = "PID: " + pid;
-  document.getElementById("pubmed_text").innerHTML = abstract;
+  document.getElementById("pubmed_text").innerHTML = "Title: " + title + "<br>Abstract:<br>  " + abstract;
+  document.getElementById("entity_info").innerHTML = entities_info_str;
   
   
   update_annotation_buttons();
