@@ -2,7 +2,7 @@
 
 Install Node.js (https://nodejs.org/en/) on the server or your local machine
 
-Set up configuration:
+Set up configuration (you can enter any value you like or leave them blank):
 
 ```
 rpm init
