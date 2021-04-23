@@ -5,7 +5,7 @@ Install Node.js on the server or your local machine
 Set up configuration:
 
 ```
-rpm init
+npm init
 ```
 
 Install express library to node.js:
