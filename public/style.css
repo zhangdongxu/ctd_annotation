@@ -1,0 +1,35 @@
+body {
+  max-width: 1000px;
+  margin: auto;
+}
+img {
+  width: 100px;
+  border-radius: 50px;
+  float: center;
+}
+p.username {
+  font-weight: bold;
+}
+.concept {
+  position: relative;
+}
+.mention {
+  display: inline-block;
+  border-radius: 5px;
+  padding: 3px 0.5em;
+  margin-top: 2px;
+}
+.label {
+  display: none;
+  position: absolute;
+  bottom: 1.5em;
+  left: 0.1em;
+  padding: 1em;
+  background-color: rgba(100, 0, 0, 0.8);
+  color: white;
+  width: 25em;
+  box-shadow: 6px 6px 2px 1px rgba(10, 10, 10, 0.6);
+}
+.mention:hover + .label {
+  display: block;
+}

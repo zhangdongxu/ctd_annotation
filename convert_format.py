@@ -7,7 +7,7 @@ for doc in dataset:
     entity_dict = {}
     for ent in doc['entity']:
         start, end, mention, etype, eid = ent["start"], ent["end"], ent["mention"], ent["type"], ent["id"]
-        if eid != '-':
+        if eid != '-' and etype in ["Chemical", "Gene", "Disease"]:
             if eid not in entity_dict: entity_dict[eid] = []
             entity_dict[eid].append([start, end, mention, etype])
     new_doc = {}

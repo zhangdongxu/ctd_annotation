@@ -11,21 +11,6 @@ var label_list = [["", "", ""]];
 var relation_types = [];
 var completevalue;
 
-var color_pool = {
-  BLUE: "#0074D9",
-  AQUA: "#7FDBFF",
-  TEAL: "#39CCCC",
-  OLIVE: "#3D9970",
-  GREEN: "#2ECC40",
-  LIME: "#01FF70",
-  YELLOW: "#FFDC00",
-  ORANGE: "#FF851B",
-  RED: "#FF4136",
-  FUCHSIA: "#F012BE",
-  PURPLE: "#B10DC9",
-  GRAY: "#AAAAAA",
-  };
-
 
 function newSession() {
  document.getElementById("login").innerHTML = '<input type="text", id="password", placeholder="Enter the code" /> <input type="button" , value="Login" onclick="userLogin()" />';
@@ -67,13 +52,6 @@ async function userLogin() {
   
 }
 
-function generateRandomColorRgb() {
-  const red = Math.floor(Math.random() * 200 + 32);
-  const green = Math.floor(Math.random() * 200 + 32);
-  const blue = Math.floor(Math.random() * 200 + 32);
-  return "rgb(" + red + ", " + green + ", " + blue + ")";
-}
-
 async function update_new_page() {
   if (active == false){
     return;
@@ -104,54 +82,18 @@ async function update_new_page() {
   document.getElementById("messages").innerHTML =
     "Page " + (page_index + 1);
   
-  entity_colors = {};
-  color_pool_key = Object.keys(color_pool);
-  for (var i = 0; i < entities.length; i++){
-    //entity_colors[entities[i]] = Math.floor(Math.random()*16777215).toString(16);
-    if (color_pool_key.length > 0){
-      select_color_id = Math.floor(Math.random() * color_pool_key.length);
-      entity_colors[entities[i]] = color_pool[color_pool_key[select_color_id]];
-      color_pool_key.splice(select_color_id, 1);
-    } else{
-      entity_colors[entities[i]] = generateRandomColorRgb();
-    }
-  }
-  
   var entities_info_str = "";
-  var entity_span_to_id = [];
   for (var i = 0; i < entities.length; i++){
     var ent_info_list = entities_info[entities[i]];
     var ent_offset_str = "";
     for (var j = 0; j < ent_info_list.length; j++){
-      ent_offset_str += ent_info_list[j][0] + "-" + ent_info_list[j][1] + " ";
-      entity_span_to_id.push([ent_info_list[j][0], ent_info_list[j][1], entities[i], ent_info_list[0][3]])
+      ent_offset_str += ent_info_list[j][0] + "-" + ent_info_list[j][0] + " ";
     }
-    entities_info_str +=  '<span style="background-color:' + entity_colors[entities[i]] +';"> &nbsp;&nbsp;&nbsp; </span>'  + entities[i] + ' ' + ent_info_list[0][3] + '<br>';
-    //                    " | mention = " + ent_info_list[0][2] +  " | offset = " + ent_offset_str + 
+    entities_info_str += entities[i] + ": type = " + ent_info_list[0][3] + 
+                        " | mention = " + ent_info_list[0][2] + "<br> "; // " | offset = " + ent_offset_str
   }
-  // console.log(entity_span_to_id);
-  entity_span_to_id.sort(function(a,b){return - a[0] + b[0]});
-  console.log(entity_span_to_id);
-  
-
-  
-  let text = title  + abstract;
-  for (var i = 0; i < entity_span_to_id.length; i++){
-    let start = entity_span_to_id[i][0];
-    let end = entity_span_to_id[i][1];
-    let entity_id = entity_span_to_id[i][2];
-    let entity_type = entity_span_to_id[i][3];
-    text = text.slice(0, start) + '<span class="concept"> <span class="mention ' 
-       + entity_id + '", style="background-color:' + entity_colors[entity_id] +';">' 
-       + text.slice(start, end) + '</span> <span class="label">' + entity_id + '<br>' 
-       + entity_type + '</span></span>' + text.slice(end);
-    console.log(text.slice(end));
-    console.log(text.slice(start, end));
-  }
-  console.log(text);
   document.getElementById("pubmedid").innerHTML = "PID: " + pid;
-  // document.getElementById("pubmed_text").innerHTML = "Title: " + title + "<br>Abstract:<br>  " + abstract;
-  document.getElementById("pubmed_text").innerHTML = text;
+  document.getElementById("pubmed_text").innerHTML = "Title: " + title + "<br>Abstract:<br>  " + abstract;
   document.getElementById("entity_info").innerHTML = entities_info_str;
   
   
