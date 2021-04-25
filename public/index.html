@@ -11,6 +11,11 @@
   <body onload="newSession()">
     <h1>CTD annotation interface</h1>
     <p id="login"></p>
+    <input type="button" , value="Previous page" onclick="previousPage()" />
+    <input type="number" , id="inputpage" , placeholder="Go to page number" />
+    <input type="button" , value="Go" onclick="gotoPage()" />
+    <input type="button" , value="Next page" onclick="nextPage()" />
+    <p id="messages"></p>
     <p id="pubmedid"></p>
     <hr />
     <p id="pubmed_text"></p>
@@ -24,11 +29,5 @@
     <input type="button" , value="Save" onclick="save_label()" />
     <div id="completediv"></div>
     <hr />
-    <input type="button" , value="Previous page" onclick="previousPage()" />
-    <input type="number" , id="inputpage" , placeholder="Go to page number" />
-    <input type="button" , value="Go" onclick="gotoPage()" />
-    <input type="button" , value="Next page" onclick="nextPage()" />
-
-    <p id="messages"></p>
   </body>
 </html>

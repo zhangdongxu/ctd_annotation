@@ -14,6 +14,18 @@ Install express library to node.js:
 npm install express
 ```
 
+Install nedb library to node.js:
+
+```
+npm install nedb
+```
+
+Install nedb wrapper for promise function:
+
+```
+npm install nedb-promises
+```
+
 Modify the port number (currently set to 3000) in the script and the start the server:
 
 ```

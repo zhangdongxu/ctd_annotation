@@ -7,7 +7,7 @@ var title = "";
 var abstract = "";
 var entities = [];
 var entities_info = [];
-var label_list = [["", "", ""]];
+var label_list = [{"type": "", "subj": "", "obj": ""}];
 var relation_types = [];
 var completevalue;
 
@@ -28,12 +28,14 @@ var color_pool = {
 
 
 function newSession() {
- document.getElementById("login").innerHTML = '<input type="text", id="password", placeholder="Enter the code" /> <input type="button" , value="Login" onclick="userLogin()" />';
+ document.getElementById("login").innerHTML = '<input type="text", id="password", placeholder="Enter the code" />'
+                                            + '<input type="button" , value="Login" onclick="userLogin()" />'
+                                            + '<input type="button" , value="Logout" onclick="userLogout()" />';
 }
 
 async function userLogin() {
   let password = document.getElementById("password").value;
-  console.log(password);
+  // console.log(password);
   const options = {
     method: 'POST',
     headers: {
@@ -47,22 +49,70 @@ async function userLogin() {
   // const res=null;
   // fetch('/login', options).then(response => {
   //  res = response.json();});
-  console.log(res);
+  // console.log(res);
   if (res.status == true){
       active = true;
       total_num_pages = res.total_num_pages;
       relation_types = res.relation_types;
       username = password;
-      page_index = res.browse_history;
+      page_index = res.browsing_history;
       document.getElementById("messages").innerHTML =
       "Login successfully! Welcome!";
       update_new_page();
     } else {
+      active = false;
+      total_num_pages = -1;
+      relation_types = [];
+      username = null;
+      page_index = -1;
       document.getElementById("messages").innerHTML =
       "Invalid code. Please try again";
+      update_new_page();
     }
-  console.log(relation_types);
-  console.log(username);
+  // console.log(relation_types);
+  // console.log(username);
+  
+  
+}
+
+async function userLogout() {
+  let password = "";
+  // console.log(password);
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"password": password})
+  };
+
+  const response = await fetch('/login', options);
+  const res = await response.json();
+  // const res=null;
+  // fetch('/login', options).then(response => {
+  //  res = response.json();});
+  // console.log(res);
+  if (res.status == true){
+      active = true;
+      total_num_pages = res.total_num_pages;
+      relation_types = res.relation_types;
+      username = password;
+      page_index = res.browsing_history;
+      document.getElementById("messages").innerHTML =
+      "Still login";
+      update_new_page();
+    } else {
+      active = false;
+      total_num_pages = -1;
+      relation_types = [];
+      username = null;
+      page_index = -1;
+      document.getElementById("messages").innerHTML =
+      "Has logged out";
+      update_new_page();
+    }
+  // console.log(relation_types);
+  // console.log(username);
   
   
 }
@@ -76,6 +126,11 @@ function generateRandomColorRgb() {
 
 async function update_new_page() {
   if (active == false){
+    document.getElementById("pubmedid").innerHTML = "";
+    // document.getElementById("pubmed_text").innerHTML = "Title: " + title + "<br>Abstract:<br>  " + abstract;
+    document.getElementById("pubmed_text").innerHTML = "";
+    document.getElementById("entity_info").innerHTML = "";
+    update_annotation_buttons();
     return;
   }
   // const options = {
@@ -85,7 +140,7 @@ async function update_new_page() {
   //   },
   //   // body: JSON.stringify({"username": username, "page_number": page_index})
   // };
-  const response = await fetch('/newpage?page_num=' + page_index + '&username=' + username);
+  const response = await fetch('/newpage?page_index=' + page_index + '&username=' + username);
   const input_data = await response.json();
   // fetch('/newpage?page_num=' + page_index + '&username=' + username).then(response => {
   //   let input_data = response.json();
@@ -98,9 +153,13 @@ async function update_new_page() {
   
   entities_info = input_data.entities_info;
   entities = Object.keys(entities_info);
-  label_list = input_data.labels;
+  label_list = input_data.relations;
+  if (label_list.length == 0) {
+    label_list.push({"type":"", "subj":"", "obj":""});
+  }
   completevalue = input_data.complete;
-  console.log(entities.length);
+  //console.log(completevalue)
+  // console.log(entities.length);
   document.getElementById("messages").innerHTML =
     "Page " + (page_index + 1);
   
@@ -124,14 +183,14 @@ async function update_new_page() {
     var ent_offset_str = "";
     for (var j = 0; j < ent_info_list.length; j++){
       ent_offset_str += ent_info_list[j][0] + "-" + ent_info_list[j][1] + " ";
-      entity_span_to_id.push([ent_info_list[j][0], ent_info_list[j][1], entities[i], ent_info_list[0][3]])
+      entity_span_to_id.push([ent_info_list[j][0], ent_info_list[j][1], entities[i], ent_info_list[0][3]]);
     }
     entities_info_str +=  '<span style="background-color:' + entity_colors[entities[i]] +';"> &nbsp;&nbsp;&nbsp; </span>'  + entities[i] + ' ' + ent_info_list[0][3] + '<br>';
     //                    " | mention = " + ent_info_list[0][2] +  " | offset = " + ent_offset_str + 
   }
   // console.log(entity_span_to_id);
   entity_span_to_id.sort(function(a,b){return - a[0] + b[0]});
-  console.log(entity_span_to_id);
+  // console.log(entity_span_to_id);
   
 
   
@@ -145,10 +204,10 @@ async function update_new_page() {
        + entity_id + '", style="background-color:' + entity_colors[entity_id] +';">' 
        + text.slice(start, end) + '</span> <span class="label">' + entity_id + '<br>' 
        + entity_type + '</span></span>' + text.slice(end);
-    console.log(text.slice(end));
-    console.log(text.slice(start, end));
+    // console.log(text.slice(end));
+    // console.log(text.slice(start, end));
   }
-  console.log(text);
+  // console.log(text);
   document.getElementById("pubmedid").innerHTML = "PID: " + pid;
   // document.getElementById("pubmed_text").innerHTML = "Title: " + title + "<br>Abstract:<br>  " + abstract;
   document.getElementById("pubmed_text").innerHTML = text;
@@ -162,25 +221,25 @@ function changeLabel(slot) {
   if (active == false){
     return;
   }
-  console.log(slot);
+  // console.log(slot);
   slot_type = slot.id.slice(0, 2);
   label_index = parseInt(slot.id.slice(2));
 
-  console.log(slot_type);
-  console.log(label_index);
-  console.log(slot[slot.selectedIndex].text);
+  // console.log(slot_type);
+  // console.log(label_index);
+  // console.log(slot[slot.selectedIndex].text);
   if (slot_type == "e1") {
     //label_list[label_index][0] = slot[slot.selectedIndex].text;
-    label_list[label_index][0] = slot[slot.selectedIndex].text;
-    console.log("update e1");
+    label_list[label_index].subj = slot[slot.selectedIndex].text;
+    // console.log("update e1");
   } else if (slot_type == "e2") {
     // label_list[label_index][1] = slot[slot.selectedIndex].text;
-    label_list[label_index][1] = slot[slot.selectedIndex].text;
-    console.log("update e2");
+    label_list[label_index].obj = slot[slot.selectedIndex].text;
+    // console.log("update e2");
   } else {
     // label_list[label_index][2] = slot[slot.selectedIndex].text;
-    label_list[label_index][2] = slot[slot.selectedIndex].text;
-    console.log("update re");
+    label_list[label_index].type = slot[slot.selectedIndex].text;
+    // console.log("update re");
   }
 }
 
@@ -196,6 +255,8 @@ function DeleteLabel(slot){
 
 function update_annotation_buttons() {
   if (active == false){
+    document.getElementById("options").innerHTML = "";
+    document.getElementById("completediv").innerHTML = "";
     return;
   }
 
@@ -205,7 +266,7 @@ function update_annotation_buttons() {
     
     for (var j = 0; j < entities.length; j++) {
       let default_selection = "";
-      if (entities[j] == label_list[i][0]) {
+      if (entities[j] == label_list[i].subj) {
         default_selection = "' selected = 'selected'";
       }
       entity1options +=
@@ -220,7 +281,7 @@ function update_annotation_buttons() {
     let entity2options = "<option value='0'></option>";
     for (var j = 0; j < entities.length; j++) {
       let default_selection = "";
-      if (entities[j] == label_list[i][1]) {
+      if (entities[j] == label_list[i].obj) {
         default_selection = "' selected = 'selected'";
       }
       entity2options +=
@@ -235,7 +296,7 @@ function update_annotation_buttons() {
     let relationoptions = "<option value='0'></option>";
     for (var j = 0; j < relation_types.length; j++) {
       let default_selection = "";
-      if (relation_types[j] == label_list[i][2]) {
+      if (relation_types[j] == label_list[i].type) {
         default_selection = "' selected = 'selected'";
       }
       relationoptions +=
@@ -281,11 +342,11 @@ function update_annotation_buttons() {
   }
 
   
-  console.log(appended_options);
+  // console.log(appended_options);
   document.getElementById("options").innerHTML = appended_options;
 
   let complete_string = "Status:<select id='complete' onchange='completeLabel(complete)'>";
-  if (completevalue == 'true'){
+  if (completevalue == true){
     complete_string = complete_string +  
     "<option value=true selected = 'selected'>Complete</option><option value=false>Not yet</option>";
   } else {
@@ -354,7 +415,7 @@ function add_label() {
   if (active == false){
     return;
   }
-  label_list.push(["", "", ""]);
+  label_list.push({"type":"", "subj":"", "obj":""});
   update_annotation_buttons();
 }
 
@@ -362,13 +423,13 @@ async function save_label() {
   if (active == false){
     return;
   }
-  console.log(label_list);
+  // console.log(label_list);
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({"username": username, "page_index": page_index, "labels": label_list})
+    body: JSON.stringify({"username": username, "page_index": page_index, "relations": label_list})
   };
   const response = await fetch('/save', options);
   const res = await response.json();
@@ -377,6 +438,7 @@ async function save_label() {
   } else {
     document.getElementById("messages").innerHTML = "Failed to save. Please try to save again.";
   }
+  update_new_page();
 
 }
 
@@ -384,7 +446,7 @@ async function completeLabel(slot) {
   if (active == false){
     return;
   }
-  console.log(slot[slot.selectedIndex].value);
+  // console.log(slot[slot.selectedIndex].value);
   const options = {
     method: 'POST',
     headers: {
