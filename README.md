@@ -33,3 +33,6 @@ node index.js
 ```
 
 Visit localhost:3000 (if port=3000) via a browser. Currently we have two account code: apple / banana
+
+If a new annotator joins, currently we need to stop the service, and run: `node add_new_user.js`. Then restart the service: `node index.js`
+
